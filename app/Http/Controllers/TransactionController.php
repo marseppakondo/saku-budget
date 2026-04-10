@@ -2,34 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index(){
+    public function index(){        
         return response()->json([
             'success' => true,
             'message' => 'List of transactions',
-            'data' => Transaction::all()
+            'data' => auth()->user()->transactions
         ], 200);
     }
 
     public function store(Request $request){
-        $request->validate([
-            'amount' => 'required|numeric',
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:1',
             'category' => 'required|string',
             'date' => 'required|date',
             'description' => 'required|string',
         ]);
 
-        $transaction = Transaction::create([
-            'amount' => $request->amount,
-            'category' => $request->category,
-            'date' => $request->date,
-            'description' => $request->description,
-            'user_id' => $request->user()->id
-        ]);
+        $transaction = auth()->user()->transactions()->create($validated);
 
         return response()->json([
             'success' => true,
@@ -38,25 +31,25 @@ class TransactionController extends Controller
         ], 201);
     }
 
-    public function show($id){
-        $transaction = Transaction::find($id);
+    public function show($id) {
+        $transaction = auth()->user()->transactions()->find($id);
 
         if (!$transaction) {
             return response()->json([
                 'success' => false,
-                'message' => 'Transaction not found'
+                'message' => 'Transaction not found or access denied'
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'Transaction details',
             'data' => $transaction
         ], 200);
     }
 
+
     public function delete($id){
-        $transaction = Transaction::find($id);
+        $transaction = auth()->user()->transactions()->find($id);
 
         if (!$transaction) {
             return response()->json([

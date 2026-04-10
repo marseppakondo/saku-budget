@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedInteger('user_id');
             $table->string('description');
             $table->decimal('amount', 10, 2);
+            $table->string('category');
+            $table->date('date');
             $table->timestamps();
         });
     }
