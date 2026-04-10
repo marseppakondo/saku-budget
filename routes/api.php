@@ -17,3 +17,6 @@ Route::prefix("auth")->group(function () {
 });
 
 Route::get('/transactions', [TransactionController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/transactions', [TransactionController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware('auth:sanctum');
+Route::delete('/transactions/{id}', [TransactionController::class, 'delete'])->middleware('auth:sanctum');
